@@ -1,0 +1,39 @@
+﻿@model List<string>
+
+<div class="form-group">
+    <label for="wepSelect">Select Weapon</label>
+    @{
+        if ((Model != null) && (Model.Any()))
+        {
+            <select id="wepSelect" class="form-control">
+                <option></option>
+                @foreach (var i in Model)
+                {
+                    <option>@i</option>
+                }
+            </select>
+        }
+        else
+        {
+            <select id="wepSelect" class="form-control" disabled>
+                <option></option>
+            </select>
+        }
+    }
+</div>
+
+<script>
+    $(function () {
+        $("#wepSelect").change(function () {
+            $.ajax({
+                method: 'GET',
+                data: { item: $("#wepSelect").val() },
+                url: 'BattletechFCS?handler=WeaponAmmo'
+            }).done(function (data, statusText, xhdr) {
+                $("#ammoSelectDiv").html(data);
+            }).fail(function (xhdr, statusText, errorText) {
+                $("result").text(JSON.stringify(xhdr));
+            });
+        });
+    });
+</script>

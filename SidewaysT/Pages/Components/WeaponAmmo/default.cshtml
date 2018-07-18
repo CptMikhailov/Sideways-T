@@ -1,0 +1,23 @@
+﻿@model List<SidewaysT.Models.AmmoTypeEnum>
+
+<div class="form-group">
+    <label for="ammoSelect">Select Ammo</label>
+    @{
+        if ((Model != null) && (Model.Any()))
+        {
+            <select id="ammoSelect" class="form-control">
+                <option></option>
+                @foreach (var a in Model)
+                {
+                    <option>@a</option>
+                }
+            </select>
+        }
+        else
+        {
+            <select id="ammoSelect" class="form-control" disabled>
+                <option></option>
+            </select>
+        }
+    }
+</div>

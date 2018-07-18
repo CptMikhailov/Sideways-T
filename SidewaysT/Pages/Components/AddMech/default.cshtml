@@ -1,0 +1,20 @@
+﻿@model List<string>
+
+<nav>
+    <div class="nav nav-tabs" id="mechTab" role="tablist">
+        @{
+            foreach (var m in Model)
+            {
+                <a class="nav-item nav-link" id="nav-@m-tab" data-toggle="tab" href="#nav-@m" role="tab" aria-controls="nav-@m" aria-selected="false">@m</a>
+            }
+        }
+    </div>
+</nav>
+<div class="tab-content" id="mechTab-content">
+    @{
+        foreach (var m in Model)
+        {
+            <div class="tab-pane fade" id="nav-@m" role="tabpanel" aria-labelledby="nav-@m-tab">...</div>
+        }
+    }
+</div>

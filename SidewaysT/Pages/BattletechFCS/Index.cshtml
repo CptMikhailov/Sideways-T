@@ -1,0 +1,153 @@
+﻿@page
+@model BattletechFCSModel
+
+<div class="jumbotron">
+    <h1 class="display-4"> Battletech Fire Control System</h1>
+    <p class="lead">Temporary description</p>
+    <hr class"my-4" />
+    <p>
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addMechModal">Add new 'Mech</button>
+        <a class="btn btn-primary disabled" id="collapseWepSelectBtn" data-toggle="collapse" href="#collapseWepSelect" role="button" aria-expanded="false" aria-controls="collapseExample">
+            Select new weapon
+        </a>
+    </p>
+    <div class="modal fade" id="addMechModal" tabindex="-1" role="dialog" aria-labelledby="addMechModalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addMechModalLongTitle">Add new 'Mech</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label for="addMechModalNew">'Mech name</label>
+                            <input type="text" class="form-control" id="addMechModalNew">
+                            <ul class="list-group" id="mechList"></ul>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="addMechBtn">Add 'Mech</button>
+                    <button type="button" class="btn btn-success" id="loadMechBtn">Load 'Mechs</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="collapse" id="collapseWepSelect">
+        <div class="card card-body">
+            <form name="Form1">
+                <div class="form-row">
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="catSelect">Select Weapon Category</label>
+                            <select id="catSelect" name="catSelect" class="form-control" required>
+                                <option></option>
+                                @foreach (var c in Model.Weapon.Select(t => t.Category).Distinct().ToList())
+                                {
+                                    <option>@c</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col" id="wepSelectDiv" name="wepSelectDiv">
+                        @await Component.InvokeAsync("WeaponItems", new List<string>())
+                    </div>
+                    @*<div class="col">
+                        <div class="form-group">
+                            <label for="wepSelect">Select Weapon</label>
+                            <select id="wepSelect" class="form-control">
+                                <optgroup label="Weapon" id="wep">
+                                    @await Component.InvokeAsync("WeaponItems", new List<string>())
+                                </optgroup>
+                            </select>
+                        </div>
+                    </div>*@
+                    <div class="col" id="ammoSelectDiv" name="ammoSelectDiv">
+                        @await Component.InvokeAsync("WeaponAmmo", new List<SidewaysT.Models.AmmoTypeEnum>())
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div id="addMechDiv">
+        @await Component.InvokeAsync("AddMech", new string("AddNewMech") )
+    </div>
+</div>
+
+@section Scripts
+{
+    <script>
+        $(function () {
+            $("#catSelect").change(function () {
+                $.ajax({
+                    method: 'GET',
+                    data: { category: $("#catSelect").val() },
+                    url: 'BattletechFCS?handler=WeaponItems'
+                }).done(function (data, statusText, xhdr) {
+                    $("#wepSelectDiv").html(data);
+                    $("#ammoSelect").empty();
+                    $("#ammoSelect").prop("disabled", true);
+                }).fail(function (xhdr, statusText, errorText) {
+                    $("result").text(JSON.stringify(xhdr));
+                });
+            });
+        });
+    </script>
+    <script>
+        $(function () {
+            $("#addMechBtn").click(function () {
+                $("#mechList").add("<li class=\"list-group-item\">" + $("#addMechModalNew").val() + "</li>").appendTo("#mechList");
+                $("#addMechModalNew").val("");
+            });
+        });
+    </script>
+    <script>
+        $(function () {
+            $("#loadMechBtn").click(function () {
+                var mechs = [];
+                $("#mechList").contents().each(function () {
+                    mechs.push($(this).text());
+                });
+                $.ajax({
+                    method: 'GET',
+                    data: { mechs: mechs.join(' ') },
+                    url: 'BattletechFCS?handler=AddMech'
+                }).done(function (data, statusText, xhdr) {
+                    $("#addMechDiv").html(data);
+                    $("#addMechModal").modal("toggle");
+                    $("#collapseWepSelectBtn").removeClass("disabled");
+                }).fail(function (xhdr, statusText, errorText) {
+                    $("result").text(JSON.stringify(xhdr))
+                });
+            });
+        });
+    </script>
+    @*<script>
+        $(function () {
+            $(this.).change(function () {
+                $.ajax({
+                    method: 'GET',
+                    data: { item: $("#wepSelect").val() },
+                    url: 'BattletechFCS?handler=WeaponAmmo'
+                }).done(function (data, statusText, xhdr) {
+                    $("#ammoSelectDiv").html(data);
+                }).fail(function (xhdr, statusText, errorText) {
+                    $("result").text(JSON.stringify(xhdr));
+                });
+            });
+        });
+    </script>*@
+}
+
+@*@<script type="text/javascript">
+        $(document).ready(function () {
+            $("#catSelect").change(function () {
+                var category = $("#catSelect").val();
+                   $("#wepSelect").load('ViewComponenets/WeaponItems?category=' + category);
+            });
+        });
+    </script>*@

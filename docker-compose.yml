@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  sidewayst:
+    image: ${DOCKER_REGISTRY}sidewayst
+    build:
+      context: .
+      dockerfile: SidewaysT/Dockerfile

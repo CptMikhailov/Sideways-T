@@ -1,0 +1,37 @@
+﻿@page
+@model SidewaysT.Pages.DBView.DetailsModel
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Weapon</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Weapon.Item)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Weapon.Item)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Weapon.Category)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Weapon.Category)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Weapon.Modifier)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Weapon.Modifier)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-page="./Edit" asp-route-id="@Model.Weapon.WeaponID">Edit</a> |
+    <a asp-page="./Index">Back to List</a>
+</div>
